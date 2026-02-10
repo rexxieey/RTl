@@ -1,4 +1,6 @@
 const mineflayer = require('mineflayer');
+const http = require('http');
+const https = require('https');
 
 // Configuration - use environment variables for security
 const config = {
@@ -13,9 +15,80 @@ const config = {
   closeTimeout: 60000
 };
 
+// HTTP server configuration
+const HTTP_PORT = process.env.PORT || 3000;
+const RENDER_URL = process.env.RENDER_EXTERNAL_URL; // Render provides this automatically
+
+// HTTP server configuration
+const HTTP_PORT = process.env.PORT || 3000;
+const RENDER_URL = process.env.RENDER_EXTERNAL_URL; // Render provides this automatically
+
 // Optional: Add password if needed
 if (process.env.MC_PASSWORD) {
   config.password = process.env.MC_PASSWORD;
+}
+
+// Create HTTP server for health checks and keeping Render awake
+const server = http.createServer((req, res) => {
+  const uptime = Math.floor(process.uptime());
+  const connectedTime = lastSuccessfulConnection ? 
+    Math.floor((Date.now() - lastSuccessfulConnection) / 1000) : 0;
+  
+  const status = {
+    status: 'online',
+    bot: bot ? 'connected' : 'disconnected',
+    server: `${config.host}:${config.port}`,
+    username: config.username,
+    uptime: uptime,
+    connected_for: connectedTime,
+    reconnect_attempts: reconnectAttempts,
+    timestamp: new Date().toISOString()
+  };
+
+  if (req.url === '/health' || req.url === '/') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(status, null, 2));
+  } else if (req.url === '/ping') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('pong');
+  } else {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('Not Found');
+  }
+});
+
+server.listen(HTTP_PORT, () => {
+  console.log(`🌐 HTTP Server running on port ${HTTP_PORT}`);
+  console.log(`📍 Health check: http://localhost:${HTTP_PORT}/health`);
+  if (RENDER_URL) {
+    console.log(`📍 External URL: ${RENDER_URL}`);
+  }
+});
+
+// Self-ping to keep Render awake (pings itself every 10 minutes)
+function selfPing() {
+  if (!RENDER_URL) {
+    console.log('⚠ RENDER_EXTERNAL_URL not set, skipping self-ping');
+    return;
+  }
+
+  const pingUrl = RENDER_URL + '/ping';
+  
+  https.get(pingUrl, (res) => {
+    console.log(`✓ Self-ping successful (Status: ${res.statusCode})`);
+  }).on('error', (err) => {
+    console.log(`⚠ Self-ping failed: ${err.message}`);
+  });
+}
+
+// Start self-ping every 10 minutes (600000ms)
+if (RENDER_URL) {
+  console.log('🔄 Self-ping enabled - Service will stay awake 24/7');
+  setInterval(selfPing, 600000); // 10 minutes
+  // Initial ping after 1 minute
+  setTimeout(selfPing, 60000);
+} else {
+  console.log('ℹ Running locally - self-ping disabled');
 }
 
 console.log(`Starting Minecraft Keep-Alive Bot v2.0...`);
@@ -234,6 +307,11 @@ function shutdown() {
       // Ignore quit errors
     }
   }
+  
+  // Close HTTP server
+  server.close(() => {
+    console.log('✓ HTTP server stopped');
+  });
   
   setTimeout(() => {
     console.log('✓ Bot stopped');
