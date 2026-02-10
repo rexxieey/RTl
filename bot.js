@@ -19,10 +19,6 @@ const config = {
 const HTTP_PORT = process.env.PORT || 3000;
 const RENDER_URL = process.env.RENDER_EXTERNAL_URL; // Render provides this automatically
 
-// HTTP server configuration
-const HTTP_PORT = process.env.PORT || 3000;
-const RENDER_URL = process.env.RENDER_EXTERNAL_URL; // Render provides this automatically
-
 // Optional: Add password if needed
 if (process.env.MC_PASSWORD) {
   config.password = process.env.MC_PASSWORD;
