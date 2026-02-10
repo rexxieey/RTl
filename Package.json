@@ -1,0 +1,22 @@
+{
+  "name": "minecraft-keepalive-bot",
+  "version": "1.0.0",
+  "description": "A Minecraft bot to keep server alive on Render",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "keywords": [
+    "minecraft",
+    "bot",
+    "keepalive",
+    "render"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "mineflayer": "^4.20.1"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
