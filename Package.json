@@ -1,22 +1,15 @@
 {
-  "name": "minecraft-keepalive-bot",
+  "name": "kingsnetwork-keepalive-bot",
   "version": "1.0.0",
-  "description": "A Minecraft bot to keep server alive on Render",
+  "description": "Keep-alive bot for enchanted.kingsnetwork.uk",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
   },
-  "keywords": [
-    "minecraft",
-    "bot",
-    "keepalive",
-    "render"
-  ],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
-    "mineflayer": "^4.20.1"
+    "mineflayer": "^4.34.0"
   },
   "engines": {
-    "node": ">=18.x"
+    "node": ">=18"
   }
+}
