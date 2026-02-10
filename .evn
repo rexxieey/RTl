@@ -1,0 +1,13 @@
+# Configuration for enchanted.kingsnetwork.uk:25813
+
+# Copy this to your Render Environment Variables
+
+MC_HOST=enchanted.kingsnetwork.uk
+MC_PORT=25813
+MC_USERNAME=KeepAliveBot
+MC_AUTH=offline
+# MC_VERSION=1.21.11  # Uncomment and adjust if needed
+
+# If the server requires authentication:
+# MC_AUTH=microsoft
+# MC_PASSWORD=your_password
